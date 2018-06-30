@@ -4,6 +4,9 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 use Validator;
 
 class UserController extends Controller
@@ -41,6 +44,7 @@ class UserController extends Controller
             return response()->json(['error'=>$validator->errors()], 401);
         }
         $input = $request->all();
+        $input->name = ucfirst(strtolower($input->name));
         $input['password'] = bcrypt($input['password']);
         $user = User::create($input);
         $success['token'] =  $user->createToken('MyApp')-> accessToken;
@@ -56,5 +60,39 @@ class UserController extends Controller
     {
         $user = Auth::user();
         return response()->json(['success' => $user], $this-> successStatus);
+    }
+
+    public function editUser(Request $request){
+
+        $user = Auth::user();
+
+        $request->validate([
+           'editName' => 'required|max:100',
+            'editEmail' => Rule::unique('users','email')->ignore($user->email,'email')
+        ]);
+
+        $image = $request->get('editPicture');
+        $imageBolean = str_contains($image, 'base64');
+
+        if($imageBolean) {
+            $image=str_replace('data:image/png;base64,', '', $image);
+            $image=str_replace(' ', '+', $image);
+            $image=base64_decode($image);
+            $imageName=str_random(10) . '.' . 'png';
+            $imagePath = "uploads/profile/" . $imageName;
+            Storage::disk('public')->delete($user->picture);
+            Storage::disk('public')->put($imagePath, $image);
+
+            $user->picture=$imagePath;
+        }
+        $user->name = ucfirst(strtolower($request->get('name')));
+
+        $user->email = $request->get('editEmail');
+
+        if($user->isDirty()){
+            $user->save();
+        }
+
+        return response()->json(['success' => $user], $this->successStatus);
     }
 }
