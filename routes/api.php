@@ -16,7 +16,13 @@ Route::post('login', 'API\UserController@login');
 Route::post('register', 'API\UserController@register');
 
 Route::group(['middleware' => 'auth:api'], function(){
-    Route::post('details', 'API\UserController@details');
+    Route::post('user', 'API\UserController@user');
     Route::post('searchUser', 'API\SearchController@searchUser');
     Route::post('editUser', 'API\UserController@editUser');
+    Route::post('chat/auth', 'API\ChatController@auth');
+    Route::post('chat/createuser', 'API\ChatController@createUsers');
+    Route::post('chat/createroom','API\ChatController@createRoom');
+    Route::post('chat/sendmessage', 'API\ChatController@sendMessage');
+    Route::post('chat/rooms', 'API\ChatController@getRooms');
+    Route::post('chat/updateroom/{id}', 'API\ChatController@updateRoom');
 });

@@ -3,6 +3,7 @@ namespace App\Http\Controllers\API;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\User;
+use Chatkit\Chatkit;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -12,6 +13,15 @@ use Validator;
 class UserController extends Controller
 {
     public $successStatus = 200;
+    private $chatkit;
+
+    public function __construct()
+    {
+        $this->chatkit = new Chatkit([
+            'instance_locator' => 'v1:us1:ac2d862a-9a68-42ff-a7cf-d571119e2414',
+            'key' => '62ecf620-64db-44bf-94fc-78e48ccd087c:MFSQHaELirSW6ZBTsPif63SXG6F1VdM98xPXpGqvUUM='
+        ]);
+    }
     /**
      * login api
      *
@@ -36,27 +46,33 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'email' => 'required|email',
+            'email' => 'required|email|unique:users,email',
             'password' => 'required',
-            'c_password' => 'required|same:password',
+            'confirm_password' => 'required|same:password',
         ]);
         if ($validator->fails()) {
             return response()->json(['error'=>$validator->errors()], 401);
         }
         $input = $request->all();
-        $input->name = ucfirst(strtolower($input->name));
+        $input['name'] = ucfirst(strtolower($input['name']));
         $input['password'] = bcrypt($input['password']);
         $user = User::create($input);
         $success['token'] =  $user->createToken('MyApp')-> accessToken;
         $success['name'] =  $user->name;
-        return response()->json(['success'=>$success], $this-> successStatus);
+
+        $chatUser = $this->chatkit->createUser([
+            'id' => (string)$user->id,
+            'name' => $user->name
+        ]);
+
+        return response()->json(['success'=>$chatUser], $this-> successStatus);
     }
     /**
      * details api
      *
      * @return \Illuminate\Http\Response
      */
-    public function details()
+    public function user()
     {
         $user = Auth::user();
         return response()->json(['success' => $user], $this-> successStatus);
@@ -95,4 +111,5 @@ class UserController extends Controller
 
         return response()->json(['success' => $user], $this->successStatus);
     }
+
 }

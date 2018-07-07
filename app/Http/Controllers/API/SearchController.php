@@ -16,7 +16,7 @@ class SearchController extends Controller
         $text = $request->get('text');
         $searchUser = DB::table('users')->where('name','like','%'.$text.'%')
             ->where('id','!=',$user->id)
-            ->get();
+            ->get(['id','name','picture']);
 
         return response()->json(['success' => $searchUser], $this->successStatus);
     }

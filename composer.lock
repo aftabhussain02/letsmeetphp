@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "a85796bac58083fb80eba34a8c9fcd15",
+    "content-hash": "e8c793cb4551437be0c56476ac1c65e5",
     "packages": [
         {
             "name": "defuse/php-encryption",
@@ -1864,6 +1864,45 @@
                 "shell"
             ],
             "time": "2018-06-10T17:57:20+00:00"
+        },
+        {
+            "name": "pusher/pusher-chatkit-server",
+            "version": "0.5.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pusher/chatkit-server-php.git",
+                "reference": "4d50a98fbb047e76f13ca476b9b85b4d5600e0a9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pusher/chatkit-server-php/zipball/4d50a98fbb047e76f13ca476b9b85b4d5600e0a9",
+                "reference": "4d50a98fbb047e76f13ca476b9b85b4d5600e0a9",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "firebase/php-jwt": "^5.0",
+                "php": "^5.4 || ^7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Chatkit\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Pusher Chatkit PHP SDK",
+            "keywords": [
+                "chatkit",
+                "chatkit-php",
+                "chatkit-server",
+                "pusher",
+                "pusher-chatkit-server"
+            ],
+            "time": "2018-06-25T15:57:36+00:00"
         },
         {
             "name": "ramsey/uuid",
